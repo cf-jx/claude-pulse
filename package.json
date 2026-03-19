@@ -1,0 +1,11 @@
+{
+  "name": "claude-pulse",
+  "version": "1.0.0",
+  "description": "Statusline with gradient context bar, git, costs (ccusage), OAuth quota, and live tools/agents/todos tracking",
+  "keywords": ["claude-code", "statusline", "ccusage"],
+  "author": "cf-jx",
+  "license": "MIT",
+  "engines": {
+    "bun": ">=1.0.0"
+  }
+}
