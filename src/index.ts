@@ -391,14 +391,18 @@ function getHooksCount(filePath: string): number {
 interface ConfigCounts { claudeMd: number; rules: number; mcps: number; hooks: number; }
 
 function countConfigs(cwd: string): ConfigCounts {
-  const claudeDir = path.join(os.homedir(), ".claude");
+  const home = os.homedir();
+  const claudeDir = path.join(home, ".claude");
   let claudeMd = 0, rules = 0, mcps = 0, hooks = 0;
 
-  // User scope
+  // User scope — ~/.claude/
   if (existsSync(path.join(claudeDir, "CLAUDE.md"))) claudeMd++;
   rules += countRulesDir(path.join(claudeDir, "rules"));
   mcps  += getMcpCount(path.join(claudeDir, "settings.json"));
   hooks += getHooksCount(path.join(claudeDir, "settings.json"));
+
+  // ~/.claude.json (Claude Code stores MCPs here on some platforms)
+  mcps += getMcpCount(path.join(home, ".claude.json"));
 
   // Project scope
   if (cwd) {
@@ -634,14 +638,14 @@ async function main() {
     seg.push(`${quota_c}7d:${oauthData.seven_day.utilization}%${days}${R}`);
   }
 
-  // Group 3: 日:$X 周:$X — space-joined, one segment
+  // Group 3: 日:$X | 周:$X — pipe-separated, one segment
   {
     const dailyStr  = (dailyCost !== null && dailyCost > 0)
       ? `${costDay}日:$${dailyCost.toFixed(2)}${R}` : "";
     const weeklyStr = (weeklyCost !== null && weeklyCost > 0)
       ? `${costWeek}周:$${Math.round(weeklyCost)}${R}` : "";
 
-    const group3 = [dailyStr, weeklyStr].filter(Boolean).join(" ");
+    const group3 = [dailyStr, weeklyStr].filter(Boolean).join(" | ");
     if (group3) seg.push(group3);
   }
 
